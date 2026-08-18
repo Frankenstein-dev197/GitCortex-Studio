@@ -1,76 +1,96 @@
-# Architecture GitCortex AI — GitCortex Studio
+# Architecture GitCortex AI
 
-> ⚠️ **État : planifié.** À ce jour, GitCortex AI est une **couche d'intégration prévue**, pas un backend fonctionnel. Aucune fonctionnalité AI n'est présentée comme terminée tant que le backend réel n'existe pas.
+Ce document décrit la fondation d'intégration de GitCortex AI dans GitCortex Studio.
 
-## 1. Vision
+## Principe d'honnêteté
 
-GitCortex Studio vise à intégrer progressivement un agent d'assistance au développement (GitCortex AI) dans le Workbench existant de VS Code, **sans détruire l'interface professionnelle**.
+**Aucune fonctionnalité AI n'est simulée.** Tant qu'aucun backend réel n'est
+enregistré, le service `IGitCortexAgentService` signale `isBackendConnected = false`
+et toute commande renvoie un message clair indiquant qu'aucun agent n'a tourné.
+Le code ne fabrique **jamais** un résultat d'agent.
 
-Architecture cible :
+## Architecture cible
 
 ```
-User
- ↓
-GitCortex AI
- ↓
-Project
- ↓
-Files
- ↓
-Terminal
- ↓
-Tests
- ↓
-Git
- ↓
-Deploy
+Utilisateur
+     |
+     v
+GitCortex AI  (couche de contribution dans le Workbench)
+     |
+     v
+Projet
+     |
+     v
+Fichiers → Terminal → Tests → Git → Déploiement
 ```
 
-## 2. Capacités cibles (futures)
+La couche GitCortex AI est une **contribution réelle au Workbench VS Code**
+(catégorie `src/vs/workbench/contrib/gitcortex/`), pas une interface séparée.
 
-- Comprendre le projet
-- Lire / rechercher dans le code
-- Modifier / créer des fichiers
-- Exécuter des commandes (terminal)
-- Lancer les tests
-- Analyser les erreurs
-- Corriger les erreurs
-- Utiliser Git
-- Préparer un déploiement
+## Composants réels (compilés, 0 erreur TS)
 
-Chaque capacité ne sera marquée "fonctionnelle" que lorsqu'un **backend réel** sera connecté.
+### `src/vs/workbench/contrib/gitcortex/common/gitcortex.ts`
+- Interface `IGitCortexAgentService` (service DI, `createDecorator`).
+- `IGitCortexAgentBackend` : contrat pour un backend externe.
+- `IGitCortexAgentCapabilities` : drapeaux honnêtes de capacité
+  (readsFiles, writesFiles, runsTerminal, runsTests, usesGit, deploys).
+- `GitCortexBackendNotConnectedError` : erreur explicite quand aucun backend.
 
-## 3. Points d'intégration naturels (VS Code Workbench)
+### `src/vs/workbench/contrib/gitcortex/common/gitcortexAgentService.ts`
+- Implémentation par défaut `GitCortexAgentService`.
+- `registerSingleton` (DI réelle de VS Code).
+- `run()` renvoie `{ connected: false, error: ... }` si aucun backend — pas de fake.
 
-GitCortex AI sera intégré dans les emplacements existants de VS Code :
+### `src/vs/workbench/contrib/gitcortex/common/openhands.ts`
+- Interface d'adaptateur `IOpenHandsAdapterDescriptor` + `IOpenHandsBackendFactory`.
+- **Aucun code OpenHands n'est copié dans le dépôt.** C'est un contrat d'adaptateur
+  ; l'implémentation réelle (pont vers un runtime d'agent externe) est livrée
+  séparément (ex. extension). Le cœur reste runtime-agnostique.
 
-- **Activity Bar** : une vue GitCortex dédiée.
-- **Side Bar** : panneau de conversation / tâches.
-- **Command Palette** : commandes GitCortex.
-- **Panel** : sortie de l'agent.
-- **Status Bar** : état de l'agent.
-- **Menus & Views** : contributions via le système de contributions VS Code.
+### `src/vs/workbench/contrib/gitcortex/browser/gitcortex.contribution.ts`
+- Enregistre un **vrai View Container** dans l'Activity Bar
+  (`workbench.view.gitcortex`, icône `Codicon.hubot`).
+- Commandes réelles dans la Command Palette :
+  - `gitcortex.runAgent` — affiche honnêtement que le backend n'est pas connecté
+    si c'est le cas.
+  - `gitcortex.showStatus` — affiche l'état de connexion du backend.
+- Entrée dans le menu View.
+- Enregistrée dans `src/vs/workbench/workbench.common.main.ts` comme toutes les
+  autres contributions VS Code.
 
-## 4. Intégration d'agents externes (ex. OpenHands)
+## Mains ouvertes (OpenHands)
 
-Une **interface propre** est prévue pour brancher un agent externe :
+L'intégration OpenHands se fait via l'interface `IOpenHandsBackendFactory` :
 
 ```
 GitCortex Studio
-   ↓
-GitCortex AI Service
-   ↓
-Agent Execution
-   ├── OpenHands (intégration future)
-   ├── autre agent compatible
-   ↓
-Workspace Tools
+       |
+       v
+IGitCortexAgentService  (cœur, runtime-agnostique)
+       |
+       v
+IOpenHandsBackendFactory  (adaptateur, hors-arbre)
+       |
+       v
+Runtime d'agent externe (ex. OpenHands agent-server)
+       |
+       v
+Outils de l'espace de travail (fichiers, terminal, tests, git, déploiement)
 ```
 
-**Important :** aucun code tiers n'est copié arbitrairement dans le dépôt. Seule une interface d'intégration sera définie.
+L'adaptateur concret sera livré séparément (ex. extension `gitcortex-ai`)
+afin de ne pas vendoriser de code tiers dans le dépôt principal.
 
-## 5. État actuel
+## Statut
 
-- ❌ Backend GitCortex AI : non implémenté.
-- ❌ Service d'agent : non implémenté.
-- ⏳ Plan d'architecture : ce document.
+| Composant | État |
+|---|---|
+| Interface du service AI | **Fait** (compilé) |
+| View Container Activity Bar | **Fait** (compilé) |
+| Commandes Command Palette | **Faites** (compilées) |
+| Interface adaptateur OpenHands | **Faite** (contrat) |
+| Backend agent réel | **Futur** — non connecté volontairement |
+| Adaptateur OpenHands concret | **Futur** — livré hors-arbre |
+
+La fondation est en place et honnête. Le backend sera branché lorsqu'un runtime
+d'agent réel sera disponible.
