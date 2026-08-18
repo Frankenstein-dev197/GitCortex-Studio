@@ -27,9 +27,23 @@ GitCortex Studio conserve l'**hôte d'extension** VS Code et l'API d'extension V
 
 ## 4. État actuel
 
-- ❌ Marketplace GitCortex : non implémentée.
-- ⏳ Étude Open VSX : à mener.
+- ❌ Marketplace GitCortex dédiée : non implémentée (projet séparé futur).
+- ✅ **Open VSX configuré** : `product.json` → `extensionsGallery` pointe vers le registre public Eclipse Open VSX (`https://open-vsx.org/vscode/gallery`). C'est le mécanisme officiel VS Code pour le marketplace ; aucune marketplace fictive n'est développée.
 - ✅ Hôte d'extension VS Code : conservé (hérité de l'amont).
+
+Configuration appliquée dans `product.json` :
+
+```json
+"extensionsGallery": {
+  "serviceUrl": "https://open-vsx.org/vscode/gallery",
+  "itemUrl": "https://open-vsx.org/vscode/item",
+  "publisherUrl": "https://open-vsx.org/vscode/publisher/{publisher}",
+  "resourceUrlTemplate": "https://open-vsx.org/vscode/asset/{publisher}/{name}/{version}/{type}/{path}",
+  "extensionUrlTemplate": "https://open-vsx.org/vscode/asset/{publisher}/{name}/{version}/Microsoft.VisualStudio.Code.VSIXPackage",
+  "controlUrl": "https://open-vsx.org/vscode/control",
+  "nlsBaseUrl": "https://open-vsx.org/vscode/extensionLanguageResources"
+}
+```
 
 ## 5. Extensions GitCortex (futures)
 

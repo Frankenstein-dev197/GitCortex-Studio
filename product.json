@@ -237,5 +237,14 @@
 		"GitHub.copilot-chat"
 	],
 	"sessionsWindowAllowedExtensions": [],
-	"voiceWsUrl": "wss://falcon-caas.mai.microsoft.com/voice-code/api/v1/realtime/voice"
+	"voiceWsUrl": "wss://falcon-caas.mai.microsoft.com/voice-code/api/v1/realtime/voice",
+	"extensionsGallery": {
+		"serviceUrl": "https://open-vsx.org/vscode/gallery",
+		"itemUrl": "https://open-vsx.org/vscode/item",
+		"publisherUrl": "https://open-vsx.org/vscode/publisher/{publisher}",
+		"resourceUrlTemplate": "https://open-vsx.org/vscode/asset/{publisher}/{name}/{version}/{type}/{path}",
+		"extensionUrlTemplate": "https://open-vsx.org/vscode/asset/{publisher}/{name}/{version}/Microsoft.VisualStudio.Code.VSIXPackage",
+		"controlUrl": "https://open-vsx.org/vscode/control",
+		"nlsBaseUrl": "https://open-vsx.org/vscode/extensionLanguageResources"
+	}
 }
