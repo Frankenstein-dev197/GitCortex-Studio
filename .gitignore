@@ -1,59 +1,69 @@
-# --- OS ---
 .DS_Store
+.cache
+npm-debug.log
 Thumbs.db
-desktop.ini
+node_modules/
+.tmp/
+.build/
+/extensionsCG/
+.vscode/extensions/**/out/
+extensions/**/dist/
+src/vs/base/browser/ui/codicons/codicon/codicon.ttf
+/out*/
+/extensions/**/out/
+build/node_modules
+build/darwin/.dmgbuild
+coverage/
+!/src/vs/platform/agentHost/test/node/e2e/coverage/
+test_data/
+test-results/
+test-results.xml
+vscode.lsif
+vscode.db
+/.profile-oss
+/cli/target
+/cli/openssl
+product.overrides.json
+*.snap.actual
+*.tsbuildinfo
+.eslintcache
+.vscode-test
+.chat-simulation-data
+vscode-telemetry-docs/
+test-output.json
+test/componentFixtures/.screenshots/*
+!test/componentFixtures/.screenshots/baseline/
+dist
+.playwright-cli
+.playwright-mcp
+.claude/
+.agents/agents/*.local.md
+.github/agents/*.local.md
+.agents/agents/*.local.agent.md
+.github/agents/*.local.agent.md
+.agents/hooks/*.local.json
+.github/hooks/*.local.json
+.agents/instructions/*.local.instructions.md
+.github/instructions/*.local.instructions.md
+.agents/prompts/*.local.prompt.md
+.github/prompts/*.local.prompt.md
+.agents/skills/.local/
+.github/skills/.local/
 
-# --- Éditeurs ---
-.vscode/*
-!.vscode/extensions.json
-!.vscode/launch.json
-!.vscode/tasks.json
-.idea/
+# --- GitCortex Studio additions ---
+# OS / editeurs
 *.swp
 *~
-
-# --- Node / Yarn ---
-node_modules/
-.yarn/cache
-.yarn/install-state.gz
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-store/
-
-# --- Build & artefacts ---
-out/
-out-build/
-out-vscode/
-out-vscode-min/
-out-monaco-editor/
-out-vscode-reh/
-out-vscode-reh-web/
-build/node_modules
-build/lib/vscode-built/
-*.vsix
-*.zip
-.vscode-test/
-dist/
-built/
-
-# --- Electron / runtime ---
-.runtime/
-App-PackagedResources/
-*.asar.bak
-
-# --- Tests & couverture ---
-coverage/
-.vscode-test/
-test-results/
-junit.xml
-nyc/
-
-# --- Cache & divers ---
-.cache/
-.eslintcache
-.stylelintcache
-*.log
-logs/
+.idea/
+desktop.ini
+# Cache & divers GitCortex
 tmp/
 temp/
+logs/
+*.log
+yarn-debug.log*
+yarn-error.log*
+# Build artifacts GitCortex
+*.vsix.bak
+App-PackagedResources/
+*.asar.bak
