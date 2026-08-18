@@ -60,13 +60,19 @@ Le rebranding est appliqué de façon ciblée et propre dans :
 
 Les identifiants techniques (ex. `vscode` dans les noms de modules internes, les clés d'API d'extension, les chemins de compatibilité) sont **conservés** pour ne pas casser l'écosystème. Voir `docs/BRANDING.md`.
 
-## 6. GitCortex AI (future)
+## 6. GitCortex AI (fondation posée)
 
-L'architecture cible (User → GitCortex AI → Project → Files → Terminal → Tests → Git → Deploy) est préparée comme **couche d'intégration**, pas comme backend simulé. Toute fonctionnalité non réellement connectée est marquée TODO dans `docs/AI-ARCHITECTURE.md` et `docs/ROADMAP.md`.
+La couche d'intégration GitCortex AI est **posée et compilée** (0 erreur TS) dans `src/vs/workbench/contrib/gitcortex/` :
+- `common/gitcortex.ts` — `IGitCortexAgentService`, `IGitCortexAgentBackend`, `GitCortexBackendNotConnectedError`.
+- `common/gitcortexAgentService.ts` — implémentation honnête (`isBackendConnected` false jusqu'à enregistrement d'un backend ; `run()` ne simule jamais).
+- `common/openhands.ts` — contrat d'adaptateur OpenHands (hors-arbre ; aucun code OpenHands vendorisé).
+- `browser/gitcortex.contribution.ts` — vrai View Container Activity Bar (`workbench.view.gitcortex`) + commandes `gitcortex.runAgent` / `gitcortex.showStatus` (reflètent l'état réel).
 
-## 7. Marketplace (future)
+L'architecture cible (User → GitCortex AI → Project → Files → Terminal → Tests → Git → Deploy) est préparée comme **couche d'intégration**, pas comme backend simulé. Le **backend agent concret** et l'**adaptateur OpenHands** restent futurs (livrés hors-arbre). Voir `docs/AI-ARCHITECTURE.md`.
 
-La compatibilité avec l'écosystème d'extensions VS Code est conservée. La marketplace GitCortex (future) sera basée sur Open VSX / Eclipse Open VSX. Ne pas développer de marketplace fictive. Voir `docs/MARKETPLACE.md`.
+## 7. Marketplace (Open VSX configuré)
+
+La compatibilité avec l'écosystème d'extensions VS Code est conservée. `product.json` → `extensionsGallery` pointe vers le registre public **Eclipse Open VSX** (`open-vsx.org/vscode/gallery`). C'est le mécanisme officiel VS Code pour le marketplace ; aucune marketplace fictive n'est développée. La marketplace GitCortex dédiée reste un projet séparé futur. Voir `docs/MARKETPLACE.md`.
 
 ## 8. Conventions de commits
 
