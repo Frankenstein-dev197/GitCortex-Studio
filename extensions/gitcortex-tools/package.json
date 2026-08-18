@@ -1,0 +1,180 @@
+{
+  "name": "gitcortex-tools",
+  "displayName": "GitCortex Tools",
+  "description": "Developer tooling and the GitCortex developer-first interface: Projects, Cloud Workspace, Marketplace views plus project scaffolding and deploy helpers.",
+  "version": "0.1.0",
+  "publisher": "gitcortex",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other", "Snippets", "Walkthroughs"],
+  "icon": "icon.png",
+  "activationEvents": [
+    "onCommand:gitcortex.projects.open",
+    "onView:gitcortex.projects",
+    "onView:gitcortex.cloud",
+    "onView:gitcortex.marketplace"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gitcortex-projects",
+          "title": "Projects",
+          "icon": "resources/projects.svg"
+        },
+        {
+          "id": "gitcortex-cloud",
+          "title": "Cloud Workspace",
+          "icon": "resources/cloud.svg"
+        },
+        {
+          "id": "gitcortex-marketplace",
+          "title": "Marketplace",
+          "icon": "resources/marketplace.svg"
+        }
+      ]
+    },
+    "views": {
+      "gitcortex-projects": [
+        {
+          "id": "gitcortex.projects",
+          "name": "Projects",
+          "icon": "resources/projects.svg"
+        }
+      ],
+      "gitcortex-cloud": [
+        {
+          "id": "gitcortex.cloud",
+          "name": "Cloud Workspaces",
+          "icon": "resources/cloud.svg"
+        }
+      ],
+      "gitcortex-marketplace": [
+        {
+          "id": "gitcortex.marketplace",
+          "name": "GitCortex Marketplace",
+          "icon": "resources/marketplace.svg"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "gitcortex.projects",
+        "contents": "No project open.\n[Open Project](command:gitcortex.projects.open)\n[New Project](command:gitcortex.projects.new)\nTo learn more about GitCortex Studio [read the docs](https://github.com/Frankenstein-dev197/GitCortex-Studio)."
+      },
+      {
+        "view": "gitcortex.cloud",
+        "contents": "No cloud workspace connected.\n[Connect Workspace](command:gitcortex.cloud.connect)\nGitCortex Cloud Workspace lets you run your projects in a remote, agent-ready environment."
+      },
+      {
+        "view": "gitcortex.marketplace",
+        "contents": "Browse the GitCortex Extension Marketplace.\n[Open Marketplace](command:gitcortex.marketplace.open)"
+      }
+    ],
+    "commands": [
+      {
+        "command": "gitcortex.projects.open",
+        "title": "GitCortex: Open Project",
+        "category": "GitCortex"
+      },
+      {
+        "command": "gitcortex.projects.new",
+        "title": "GitCortex: New Project",
+        "category": "GitCortex"
+      },
+      {
+        "command": "gitcortex.projects.refresh",
+        "title": "GitCortex: Refresh Projects",
+        "category": "GitCortex",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "gitcortex.cloud.connect",
+        "title": "GitCortex: Connect Cloud Workspace",
+        "category": "GitCortex"
+      },
+      {
+        "command": "gitcortex.cloud.disconnect",
+        "title": "GitCortex: Disconnect Cloud Workspace",
+        "category": "GitCortex"
+      },
+      {
+        "command": "gitcortex.marketplace.open",
+        "title": "GitCortex: Open Marketplace",
+        "category": "GitCortex"
+      },
+      {
+        "command": "gitcortex.deploy.run",
+        "title": "GitCortex: Deploy",
+        "category": "GitCortex"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "gitcortex.projects.refresh",
+          "when": "view == gitcortex.projects",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "gitcortex.projects.open"
+        },
+        {
+          "command": "gitcortex.projects.new"
+        },
+        {
+          "command": "gitcortex.cloud.connect"
+        },
+        {
+          "command": "gitcortex.marketplace.open"
+        },
+        {
+          "command": "gitcortex.deploy.run"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "GitCortex Studio",
+      "properties": {
+        "gitcortex.projects.recent": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Recent project paths tracked by GitCortex."
+        },
+        "gitcortex.cloud.endpoint": {
+          "type": "string",
+          "default": "",
+          "description": "Cloud workspace endpoint URL."
+        },
+        "gitcortex.deploy.defaultTarget": {
+          "type": "string",
+          "enum": ["preview", "staging", "production"],
+          "default": "preview",
+          "description": "Default deploy target for the GitCortex deploy flow."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Frankenstein-dev197/GitCortex-Studio",
+    "directory": "extensions/gitcortex-tools"
+  }
+}

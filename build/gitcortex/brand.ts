@@ -20,9 +20,8 @@ interface Patch {
 	replacements: { from: string; to: string }[];
 }
 
-// Declarative branding patches. Each targets a specific upstream file and
-// performs exact string replacements. Kept minimal and auditable.
-const PATCHES_TO_APPLY: Patch[] = [
+// Identity patches for product.json — the primary branding seam.
+const PRODUCT_PATCHES: Patch[] = [
 	{
 		file: 'product.json',
 		replacements: [
@@ -32,15 +31,54 @@ const PATCHES_TO_APPLY: Patch[] = [
 			{ from: '"dataFolderName": ".vscode-oss"', to: '"dataFolderName": "GitCortexStudio"' },
 			{ from: '"sharedDataFolderName": ".vscode-oss-shared"', to: '"sharedDataFolderName": "GitCortexStudio-Shared"' },
 			{ from: '"serverApplicationName": "code-server-oss"', to: '"serverApplicationName": "gitcortex-server"' },
+			{ from: '"serverDataFolderName": ".vscode-server-oss"', to: '"serverDataFolderName": ".gitcortex-server"' },
 			{ from: '"tunnelApplicationName": "code-tunnel-oss"', to: '"tunnelApplicationName": "gitcortex-tunnel"' },
 			{ from: '"win32DirName": "Microsoft Code OSS"', to: '"win32DirName": "GitCortex Studio"' },
 			{ from: '"win32NameVersion": "Microsoft Code OSS"', to: '"win32NameVersion": "GitCortex Studio"' },
 			{ from: '"win32RegValueName": "CodeOSS"', to: '"win32RegValueName": "GitCortexStudio"' },
 			{ from: '"win32AppUserModelId": "Microsoft.CodeOSS"', to: '"win32AppUserModelId": "studio.gitcortex"' },
+			{ from: '"win32ShellNameShort": "C&ode - OSS"', to: '"win32ShellNameShort": "G&itCortex Studio"' },
 			{ from: '"linuxIconName": "code-oss"', to: '"linuxIconName": "gitcortex-studio"' },
-			{ from: '"darwinBundleIdentifier": "com.visualstudio.code.oss"', to: '"darwinBundleIdentifier": "studio.gitcortex"' },
+			{ from: '"darwinBundleIdentifier": "com.visualstudio.code.oss"', to: '"darwinBundleIdentifier": "studio.gitcortex"'},
+			{ from: '"darwinApplicationName": "Visual Studio Code - OSS"', to: '"darwinApplicationName": "GitCortex Studio"' },
 			{ from: '"urlProtocol": "code-oss"', to: '"urlProtocol": "gitcortex"' },
 			{ from: '"win32MutexName": "vscodeoss"', to: '"win32MutexName": "gitcortexstudiostable"' },
+			{ from: '"win32TunnelServiceMutex": "vscodeoss-tunnelservice"', to: '"win32TunnelServiceMutex": "gitcortex-tunnelservice"' },
+			{ from: '"win32TunnelMutex": "vscodeoss-tunnel"', to: '"win32TunnelMutex": "gitcortex-tunnel"' },
+			{ from: '"agentsTelemetryAppName": "agents"', to: '"agentsTelemetryAppName": "gitcortex"' },
+		],
+	},
+	{
+		// Rebrand the npm package identity (used in About, telemetry, version probes).
+		file: 'package.json',
+		replacements: [
+			{ from: '"name": "code-oss-dev"', to: '"name": "gitcortex-studio-dev"' },
+		],
+	},
+];
+
+// User-facing string patches applied across the engine tree. These target the
+// specific source files that surface "Visual Studio Code"/"Code - OSS" to the
+// end user (welcome, onboarding, walkthrough, server CLI). Test files and pure
+// code comments are intentionally left alone — they never reach the user.
+const STRING_PATCHES: Patch[] = [
+	{
+		file: 'src/vs/workbench/contrib/welcomeOnboarding/browser/onboardingVariationA.ts',
+		replacements: [
+			{ from: 'Welcome to Visual Studio Code', to: 'Welcome to GitCortex Studio' },
+		],
+	},
+	{
+		file: 'src/vs/workbench/contrib/welcomeWalkthrough/browser/editor/vs_code_editor_walkthrough.ts',
+		replacements: [
+			{ from: 'Visual Studio Code comes with the powerful IntelliSense', to: 'GitCortex Studio comes with the powerful IntelliSense' },
+			{ from: 'editing features in Visual Studio Code.', to: 'editing features in GitCortex Studio.' },
+		],
+	},
+	{
+		file: 'src/vs/server/node/server.cli.ts',
+		replacements: [
+			{ from: 'inside a Visual Studio Code terminal.', to: 'inside a GitCortex Studio terminal.' },
 		],
 	},
 ];
@@ -72,15 +110,25 @@ function main(): void {
 		console.error('                 Run `./build/gitcortex/import-upstream.sh <tag>` first.');
 		process.exit(1);
 	}
-	console.log('[gitcortex:brand] Applying branding patches to code-oss/ ...');
 	let totalApplied = 0;
 	let totalSkipped = 0;
-	for (const patch of PATCHES_TO_APPLY) {
+
+	console.log('[gitcortex:brand] Applying identity patches (product.json, package.json) ...');
+	for (const patch of PRODUCT_PATCHES) {
 		const res = applyPatch(patch);
 		totalApplied += res.applied;
 		totalSkipped += res.skipped;
 		console.log(`  ${res.file.padEnd(28)} applied=${res.applied} skipped=${res.skipped}`);
 	}
+
+	console.log('[gitcortex:brand] Applying user-facing string patches ...');
+	for (const patch of STRING_PATCHES) {
+		const res = applyPatch(patch);
+		totalApplied += res.applied;
+		totalSkipped += res.skipped;
+		console.log(`  ${res.file.padEnd(60)} applied=${res.applied} skipped=${res.skipped}`);
+	}
+
 	console.log(`[gitcortex:brand] Done. ${totalApplied} replacement(s) applied, ${totalSkipped} not found (ok if upstream changed).`);
 }
 
