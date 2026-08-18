@@ -1,0 +1,116 @@
+{
+  "name": "gitcortex-ai",
+  "displayName": "GitCortex AI",
+  "description": "The GitCortex AI agent — an AI-native assistant that can plan, edit files, run terminal commands, run tests, and deploy, driving real software work. OpenHands-compatible.",
+  "version": "0.1.0",
+  "publisher": "gitcortex",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other", "Machine Learning"],
+  "icon": "icon.png",
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:gitcortex.ai.open",
+    "onView:gitcortex.ai.chat"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gitcortex-ai",
+          "title": "GitCortex AI",
+          "icon": "resources/ai.svg"
+        }
+      ]
+    },
+    "views": {
+      "gitcortex-ai": [
+        {
+          "id": "gitcortex.ai.chat",
+          "type": "webview",
+          "name": "GitCortex AI",
+          "icon": "resources/ai.svg"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "gitcortex.ai.open",
+        "title": "GitCortex: Open AI",
+        "category": "GitCortex AI",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "gitcortex.ai.send",
+        "title": "GitCortex AI: Send",
+        "category": "GitCortex AI"
+      },
+      {
+        "command": "gitcortex.ai.clear",
+        "title": "GitCortex AI: Clear Conversation",
+        "category": "GitCortex AI"
+      },
+      {
+        "command": "gitcortex.ai.runFile",
+        "title": "GitCortex AI: Run on Current File",
+        "category": "GitCortex AI",
+        "icon": "$(sparkle)"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        { "command": "gitcortex.ai.open" },
+        { "command": "gitcortex.ai.clear" },
+        { "command": "gitcortex.ai.runFile" }
+      ],
+      "editor/context": [
+        {
+          "command": "gitcortex.ai.runFile",
+          "when": "editorFocus",
+          "group": "gitcortex@1"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "GitCortex AI",
+      "properties": {
+        "gitcortex.ai.transport": {
+          "type": "string",
+          "enum": ["openhands", "openai-compatible"],
+          "default": "openhands",
+          "description": "The agent transport to use for GitCortex AI."
+        },
+        "gitcortex.ai.endpoint": {
+          "type": "string",
+          "default": "",
+          "description": "Endpoint URL for the AI transport (e.g. the OpenHands agent runtime URL)."
+        },
+        "gitcortex.ai.autonomy": {
+          "type": "string",
+          "enum": ["confirm", "auto-files", "auto-all"],
+          "default": "confirm",
+          "description": "Autonomy level for destructive tools (file write, terminal, deploy)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Frankenstein-dev197/GitCortex-Studio",
+    "directory": "extensions/gitcortex-ai"
+  }
+}

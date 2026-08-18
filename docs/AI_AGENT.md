@@ -2,6 +2,8 @@
 
 GitCortex AI is the built-in agent that turns GitCortex Studio from an editor into an AI-driven development environment. It can plan, edit, run, test, and deploy software on behalf of the developer.
 
+> **Status:** foundational implementation landed in `extensions/gitcortex-ai` (orchestrator + tool registry + 7 built-in tools + pluggable transport + chat UI + smoke test). The `openhands` transport is a seam ready to point at a live OpenHands runtime.
+
 ## 1. Pipeline
 
 ```
@@ -137,3 +139,22 @@ export function activate(ctx: vscode.ExtensionContext) {
   });
 }
 ```
+
+## 7. Implementation map (as built)
+
+| Component | File | Role |
+|-----------|------|------|
+| Orchestrator | `extensions/gitcortex-ai/src/orchestrator.ts` | Plan→act→observe→reflect loop, bounded to 8 iterations/turn. |
+| Tool registry | `extensions/gitcortex-ai/src/toolRegistry.ts` | Definitions + handlers; invoke by name. |
+| Built-in tools | `extensions/gitcortex-ai/src/tools.ts` | `project.open`, `file.read`, `file.write`, `file.search`, `terminal.run`, `tests.run`, `deploy.run`. |
+| Transport | `extensions/gitcortex-ai/src/transport.ts` | `openhands` (default) / `openai-compatible`; local planner fallback. |
+| Chat UI | `extensions/gitcortex-ai/src/chatView.ts` | Webview: conversation + run log, themed with `gitcortex.aiAccent`. |
+| Types | `extensions/gitcortex-ai/src/types.ts` | `ToolDefinition`/`ToolResult`/`AgentStep`. |
+
+## 8. Autonomy & safety
+
+Destructive tools (`file.write`, `terminal.run`, `deploy.run`) prompt the user by default. `gitcortex.ai.autonomy` = `confirm` (default) | `auto-files` | `auto-all`.
+
+## 9. Testing
+
+`extensions/gitcortex-ai/test/smoke.ts` runs the orchestrator + registry + local planner headlessly and asserts the step sequence across two turns. Run: `npx tsx ./test/smoke.ts` (passes: 12 steps, plan→act→observe→reflect verified).
