@@ -2,7 +2,7 @@
 
 GitCortex AI is the built-in agent that turns GitCortex Studio from an editor into an AI-driven development environment. It can plan, edit, run, test, and deploy software on behalf of the developer.
 
-> **Status:** foundational implementation landed in `extensions/gitcortex-ai` (orchestrator + tool registry + 7 built-in tools + pluggable transport + chat UI + smoke test). The `openhands` transport is a seam ready to point at a live OpenHands runtime.
+> **Status:** foundational implementation landed in `extensions/gitcortex-ai` (orchestrator + tool registry + 7 built-in tools + pluggable transport + chat UI + native editor integration + smoke test). The default transport is now the **native Agent Host Protocol (AHP)** — GitCortex AI talks to the engine's own agent host (the same server that powers the built-in AI), discovered via the local endpoint registry. OpenHands/OpenAI-compatible transports remain available as remote runtimes.
 
 ## 1. Pipeline
 
@@ -61,7 +61,8 @@ TestTools                              DeployTools
                       ▼
             ┌─────────▼─────────┐
             │ LLM Transport     │  (pluggable)
-            │  - OpenHands       │  ← default
+            │  - AHP (native)    │  ← default: engine's own agent host
+            │  - OpenHands       │  ← remote runtime fallback
             │  - generic OpenAI  │
             └───────────────────┘
 ```
@@ -95,7 +96,11 @@ Each tool is a typed, permissioned function the agent can call:
 Every tool call is auditable and shown in the AI run log, so the developer stays in control.
 
 ### 3.3 LLM transport
-The transport is pluggable. The default transport is **OpenHands-compatible**: GitCortex can delegate real software work to an OpenHands-style agent runtime. A generic OpenAI-compatible transport is also available for lighter-weight assistance.
+The transport is pluggable. **The default is now the native Agent Host Protocol (AHP)** — instead of reinventing an agent runtime, GitCortex AI connects to the engine's own agent host. The engine publishes a discoverable WebSocket endpoint in a per-instance registry file (`<userDataPath>/agent-host/local-endpoint/entries/<identity>.json`); the AHP transport enumerates it, opens the socket with the connection token (`?tkn=…`), performs the AHP `initialize` handshake (`protocolVersions: ["0.8.0"]`), creates a session, and dispatches the user message. The engine then runs the real agent (model, tools, terminal, file system) and streams its UI natively.
+
+The AHP transport falls back gracefully to a local planner when no endpoint is discoverable (e.g. the editor's agent host is disabled), so the extension stays useful end-to-end without a live server.
+
+Remote runtimes are still available for non-native deployments: `openhands` (OpenHands-compatible agent runtime) and `openai-compatible` (lighter-weight chat-completions transport).
 
 Configuration lives in `product/product.json` under `gitcortex.ai`, allowing per-installation endpoints and credentials without code changes.
 
@@ -147,7 +152,7 @@ export function activate(ctx: vscode.ExtensionContext) {
 | Orchestrator | `extensions/gitcortex-ai/src/orchestrator.ts` | Plan→act→observe→reflect loop, bounded to 8 iterations/turn. |
 | Tool registry | `extensions/gitcortex-ai/src/toolRegistry.ts` | Definitions + handlers; invoke by name. |
 | Built-in tools | `extensions/gitcortex-ai/src/tools.ts` | `project.open`, `file.read`, `file.write`, `file.search`, `terminal.run`, `tests.run`, `deploy.run`. |
-| Transport | `extensions/gitcortex-ai/src/transport.ts` | `openhands` (default) / `openai-compatible`; local planner fallback. |
+| Transport | `extensions/gitcortex-ai/src/transport.ts` + `transport.ahp.ts` | `ahp` (default, native) / `openhands` / `openai-compatible`; local planner fallback. |
 | Chat UI | `extensions/gitcortex-ai/src/chatView.ts` | Webview: conversation + run log, themed with `gitcortex.aiAccent`. |
 | Types | `extensions/gitcortex-ai/src/types.ts` | `ToolDefinition`/`ToolResult`/`AgentStep`. |
 

@@ -11,6 +11,7 @@ import * as vscode from 'vscode';
 import { toolRegistry } from './toolRegistry';
 import { registerBuiltinTools } from './tools';
 import { OpenHandsTransport, OpenAICompatibleTransport, type AgentTransport } from './transport';
+import { AhpTransport } from './transport.ahp';
 import { AgentOrchestrator } from './orchestrator';
 import { GitCortexAIViewProvider } from './chatView';
 import type { ToolDefinition, ToolHandler } from './types';
@@ -32,14 +33,23 @@ function activeSelectionText(): { text: string; file: string } | undefined {
 	};
 }
 
+/** Build a transport by id; AHP is native, others fall back to remote runtimes. */
+function buildTransport(id: 'ahp' | 'openhands' | 'openai-compatible', endpoint: string | undefined): AgentTransport {
+	const remote = id === 'openai-compatible' ? new OpenAICompatibleTransport(endpoint) : new OpenHandsTransport(endpoint);
+	if (id === 'ahp') {
+		return new AhpTransport(remote);
+	}
+	return remote;
+}
+
 export function activate(context: vscode.ExtensionContext): GitCortexAIApi {
 	const autonomy = () =>
 		vscode.workspace.getConfiguration('gitcortex.ai').get<'confirm' | 'auto-files' | 'auto-all'>('autonomy', 'confirm');
 	const endpoint = () => vscode.workspace.getConfiguration('gitcortex.ai').get<string>('endpoint', '') || undefined;
 	const transportId = () =>
-		vscode.workspace.getConfiguration('gitcortex.ai').get<'openhands' | 'openai-compatible'>('transport', 'openhands');
+		vscode.workspace.getConfiguration('gitcortex.ai').get<'ahp' | 'openhands' | 'openai-compatible'>('transport', 'ahp');
 
-	let transport: AgentTransport = transportId() === 'openai-compatible' ? new OpenAICompatibleTransport(endpoint()) : new OpenHandsTransport(endpoint());
+	let transport: AgentTransport = buildTransport(transportId(), endpoint());
 
 	registerBuiltinTools(autonomy);
 
@@ -128,7 +138,7 @@ export function activate(context: vscode.ExtensionContext): GitCortexAIApi {
 	context.subscriptions.push(
 		vscode.workspace.onDidChangeConfiguration((e) => {
 			if (e.affectsConfiguration('gitcortex.ai')) {
-				transport = transportId() === 'openai-compatible' ? new OpenAICompatibleTransport(endpoint()) : new OpenHandsTransport(endpoint());
+				transport = buildTransport(transportId(), endpoint());
 			}
 		}),
 	);

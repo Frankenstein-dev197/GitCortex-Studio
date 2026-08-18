@@ -174,9 +174,9 @@
       "properties": {
         "gitcortex.ai.transport": {
           "type": "string",
-          "enum": ["openhands", "openai-compatible"],
-          "default": "openhands",
-          "description": "The agent transport to use for GitCortex AI."
+          "enum": ["ahp", "openhands", "openai-compatible"],
+          "default": "ahp",
+          "description": "Agent transport. 'ahp' (default) uses the engine's native Agent Host Protocol — the same server that powers the built-in AI. 'openhands'/'openai-compatible' connect to a remote runtime via gitcortex.ai.endpoint."
         },
         "gitcortex.ai.endpoint": {
           "type": "string",
@@ -201,7 +201,11 @@
   "devDependencies": {
     "@types/vscode": "^1.85.0",
     "@types/node": "^20.11.0",
+    "@types/ws": "^8.5.0",
     "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
   },
   "repository": {
     "type": "git",
