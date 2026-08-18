@@ -1,0 +1,66 @@
+{
+  "nameShort": "GitCortex",
+  "nameLong": "GitCortex Studio",
+  "applicationName": "GitCortex Studio",
+  "dataFolderName": "GitCortexStudio",
+  "win32MutexName": "gitcortexstudiostable",
+  "win32AppId": "studio.gitcortex",
+  "win32x64AppId": "studio.gitcortex.x64",
+  "win32arm64AppId": "studio.gitcortex.arm64",
+  "win32UserAppId": "studio.gitcortex.user",
+  "urlProtocol": "gitcortex",
+  "documentationUrl": "https://github.com/Frankenstein-dev197/GitCortex-Studio",
+  "reportIssueUrl": "https://github.com/Frankenstein-dev197/GitCortex-Studio/issues/new",
+  "licenseUrl": "https://github.com/Frankenstein-dev197/GitCortex-Studio/blob/main/LICENSE",
+  "privacyStatementUrl": "https://github.com/Frankenstein-dev197/GitCortex-Studio/blob/main/docs/PRIVACY.md",
+  "branding": {
+    "publisher": "GitCortex",
+    "logoPath": "resources/logos/gitcortex-logo.svg",
+    "iconPath": "resources/logos/gitcortex-icon.png",
+    "splash": {
+      "background": "#0b1120",
+      "logo": "resources/logos/gitcortex-splash.svg"
+    }
+  },
+  "gitcortex": {
+    "version": "0.1.0",
+    "upstream": "microsoft/vscode"
+  },
+  "gitcortex.ai": {
+    "defaultTransport": "openhands",
+    "transports": {
+      "openhands": {
+        "description": "OpenHands-compatible agent runtime"
+      },
+      "openai-compatible": {
+        "description": "Generic OpenAI-compatible chat completions endpoint"
+      }
+    },
+    "permissions": {
+      "file.write": "confirm",
+      "terminal.run": "confirm",
+      "deploy.run": "confirm"
+    }
+  },
+  "extensionsGallery": {
+    "serviceUrl": "",
+    "itemUrl": "",
+    "resourceUrlTemplate": "",
+    "controlUrl": ""
+  },
+  "builtInExtensions": [
+    {
+      "name": "gitcortex.gitcortex-theme",
+      "version": "0.1.0"
+    },
+    {
+      "name": "gitcortex.gitcortex-tools",
+      "version": "0.1.0"
+    },
+    {
+      "name": "gitcortex.gitcortex-ai",
+      "version": "0.1.0"
+    }
+  ],
+  "thirdPartyAnalyticId": ""
+}

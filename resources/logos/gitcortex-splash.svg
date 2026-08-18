@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400">
+  <rect width="640" height="400" fill="#0b1120"/>
+  <g transform="translate(270,120) scale(1.1)">
+    <g fill="none" stroke="#3b82f6" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M168 80 A64 64 0 1 0 168 176"/>
+      <line x1="168" y1="128" x2="104" y2="128"/>
+    </g>
+    <g fill="#e2e8f0">
+      <circle cx="104" cy="128" r="14"/>
+      <circle cx="168" cy="80" r="12"/>
+      <circle cx="168" cy="176" r="12"/>
+      <circle cx="168" cy="128" r="12"/>
+    </g>
+  </g>
+  <text x="320" y="300" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="44" font-weight="600" fill="#e2e8f0" text-anchor="middle">GitCortex Studio</text>
+  <text x="320" y="332" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#64748b" text-anchor="middle">AI-native developer platform</text>
+</svg>

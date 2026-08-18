@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build output
+out/
+out-build/
+out-vscode/
+dist/
+*.vsix
+*.zip
+*.tar.gz
+*.exe
+*.dmg
+*.AppImage
+*.deb
+*.rpm
+
+# Electron / packaging
+.docker/
+.build/
+downloads/
+.npmrc
+.npm-cache/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE / editor
+.idea/
+.vscode-test/
+.DS_Store
+Thumbs.db
+
+# Code-OSS engine transient state
+code-oss/.build/
+code-oss/out/
+code-oss/node_modules/
+code-oss/.npmrc
+
+# Secrets / env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Coverage
+coverage/
+.nyc_output/

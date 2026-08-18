@@ -1,0 +1,34 @@
+{
+  "name": "gitcortex-studio",
+  "displayName": "GitCortex Studio",
+  "description": "A professional developer IDE built on the Code-OSS (VS Code) engine — with a built-in AI agent, extension platform, and a modern developer-first interface.",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "publisher": "gitcortex",
+  "main": "./out/main.js",
+  "scripts": {
+    "gitcortex:brand": "node build/gitcortex/brand.js",
+    "gitcortex:import": "./build/gitcortex/import-upstream.sh",
+    "install": "node build/gitcortex/build.ts install",
+    "compile": "node build/gitcortex/build.ts compile",
+    "compile:extensions": "node build/gitcortex/build.ts compile-extensions",
+    "launch": "node build/gitcortex/build.ts launch",
+    "package": "node build/gitcortex/build.ts package",
+    "test": "node build/gitcortex/build.ts compile-extensions && echo 'extensions compiled; run yarn test inside each extension'"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Frankenstein-dev197/GitCortex-Studio.git"
+  },
+  "homepage": "https://github.com/Frankenstein-dev197/GitCortex-Studio",
+  "bugs": {
+    "url": "https://github.com/Frankenstein-dev197/GitCortex-Studio/issues"
+  }
+}
