@@ -1,0 +1,59 @@
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Éditeurs ---
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+*.swp
+*~
+
+# --- Node / Yarn ---
+node_modules/
+.yarn/cache
+.yarn/install-state.gz
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-store/
+
+# --- Build & artefacts ---
+out/
+out-build/
+out-vscode/
+out-vscode-min/
+out-monaco-editor/
+out-vscode-reh/
+out-vscode-reh-web/
+build/node_modules
+build/lib/vscode-built/
+*.vsix
+*.zip
+.vscode-test/
+dist/
+built/
+
+# --- Electron / runtime ---
+.runtime/
+App-PackagedResources/
+*.asar.bak
+
+# --- Tests & couverture ---
+coverage/
+.vscode-test/
+test-results/
+junit.xml
+nyc/
+
+# --- Cache & divers ---
+.cache/
+.eslintcache
+.stylelintcache
+*.log
+logs/
+tmp/
+temp/
