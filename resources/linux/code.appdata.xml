@@ -5,9 +5,9 @@
 	<project_license>@@LICENSE@@</project_license>
 	<name>@@NAME_LONG@@</name>
 	<url type="homepage">https://code.visualstudio.com</url>
-	<summary>Visual Studio Code. Code editing. Redefined.</summary>
+	<summary>GitCortex Studio. AI-native code editing.</summary>
 	<description>
-		<p>Visual Studio Code is a new choice of tool that combines the simplicity of a code editor with what developers need for the core edit-build-debug cycle. See https://code.visualstudio.com/docs/setup/linux for installation instructions and FAQ.</p>
+		<p>GitCortex Studio is a desktop code editor based on the open-source VS Code (Code-OSS) engine by Microsoft, with an AI-native workflow for the edit-build-debug cycle. Fork maintained by Frankenstein-dev197. See https://code.visualstudio.com/docs/setup/linux for upstream installation instructions and FAQ.</p>
 	</description>
 	<screenshots>
 		<screenshot type="default">
