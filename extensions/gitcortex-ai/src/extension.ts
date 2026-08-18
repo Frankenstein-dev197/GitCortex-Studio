@@ -20,6 +20,18 @@ export interface GitCortexAIApi {
 	getTools(): ToolDefinition[];
 }
 
+/** Returns the active editor's selection text + relative file path, or undefined. */
+function activeSelectionText(): { text: string; file: string } | undefined {
+	const editor = vscode.window.activeTextEditor;
+	if (!editor || editor.selection.isEmpty) {
+		return undefined;
+	}
+	return {
+		text: editor.document.getText(editor.selection),
+		file: vscode.workspace.asRelativePath(editor.document.uri),
+	};
+}
+
 export function activate(context: vscode.ExtensionContext): GitCortexAIApi {
 	const autonomy = () =>
 		vscode.workspace.getConfiguration('gitcortex.ai').get<'confirm' | 'auto-files' | 'auto-all'>('autonomy', 'confirm');
@@ -61,6 +73,54 @@ export function activate(context: vscode.ExtensionContext): GitCortexAIApi {
 			const rel = vscode.workspace.asRelativePath(fileUri);
 			provider.show();
 			await orchestrator.run(`Review and work on the current file: ${rel}`);
+		}),
+		vscode.commands.registerCommand('gitcortex.ai.explainSelection', async () => {
+			const selection = activeSelectionText();
+			if (!selection) {
+				vscode.window.showInformationMessage('GitCortex AI: select some code first.');
+				return;
+			}
+			provider.show();
+			await orchestrator.run(`Explain the following code. Summarize what it does, its inputs/outputs, and any caveats:\n\n\`\`\`\n${selection.text}\n\`\`\`\n(file: ${selection.file})`);
+		}),
+		vscode.commands.registerCommand('gitcortex.ai.refactorSelection', async () => {
+			const selection = activeSelectionText();
+			if (!selection) {
+				vscode.window.showInformationMessage('GitCortex AI: select some code first.');
+				return;
+			}
+			provider.show();
+			await orchestrator.run(`Refactor the following code for readability and maintainability without changing behavior, then apply the changes to ${selection.file}:\n\n\`\`\`\n${selection.text}\n\`\`\``);
+		}),
+		vscode.commands.registerCommand('gitcortex.ai.generateFromComment', async () => {
+			const editor = vscode.window.activeTextEditor;
+			if (!editor) {
+				return;
+			}
+			const line = editor.document.lineAt(editor.selection.active.line).text.trim();
+			if (!line) {
+				vscode.window.showInformationMessage('GitCortex AI: place the cursor on a comment line.');
+				return;
+			}
+			const rel = vscode.workspace.asRelativePath(editor.document.uri);
+			const lang = editor.document.languageId;
+			provider.show();
+			await orchestrator.run(`Generate code implementing this comment, in language ${lang}, and write it to ${rel} below the comment:\n\n${line}`);
+		}),
+		vscode.commands.registerCommand('gitcortex.ai.fixProblems', async () => {
+			const editor = vscode.window.activeTextEditor;
+			if (!editor) {
+				return;
+			}
+			const rel = vscode.workspace.asRelativePath(editor.document.uri);
+			const diags = vscode.languages.getDiagnostics(editor.document.uri);
+			const summary = diags.slice(0, 25).map((d) => `L${d.range.start.line + 1}:${d.range.start.character + 1} [${d.source ?? 'diag'}] ${d.message}`).join('\n');
+			provider.show();
+			await orchestrator.run(`Fix the following problems in ${rel} and apply the changes:\n${summary || '(no diagnostics reported — review the file for issues)'}`);
+		}),
+		vscode.commands.registerCommand('gitcortex.ai.runTests', async () => {
+			provider.show();
+			await orchestrator.run('Run the test suite for this project and report the results.');
 		}),
 	);
 

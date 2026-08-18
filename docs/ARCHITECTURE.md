@@ -1,4 +1,4 @@
-# GitCortex Studio — Architecture
+# GitCortex Studio â Architecture
 
 This document describes the product architecture of GitCortex Studio and how it relates to the Code-OSS (Visual Studio Code) engine it is built upon.
 
@@ -12,37 +12,37 @@ This document describes the product architecture of GitCortex Studio and how it 
 ## 2. Layered architecture
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│  PRODUCT LAYER  —  GitCortex Studio                     │
-│  ┌────────────┐ ┌────────────┐ ┌──────────────────────┐ │
-│  │ Branding   │ │ New UI     │ │ GitCortex AI Agent   │ │
-│  │ product.json│ │ Projects,  │ │ User→AI→Project→     │ │
-│  │ themes,    │ │ Cloud, AI, │ │ Files→Terminal→      │ │
-│  │ splash     │ │ Marketplace│ │ Tests→Deploy         │ │
-│  └────────────┘ └────────────┘ └──────────────────────┘ │
-├──────────────────────────────────────────────────────────┤
-│  EXTENSION LAYER  —  GitCortex Extension Platform        │
-│  gitcortex-ai · gitcortex-theme · gitcortex-tools       │
-│  + compatibility with existing VS Code extensions        │
-├──────────────────────────────────────────────────────────┤
-│  ENGINE LAYER  —  Code-OSS (microsoft/vscode)           │
-│  Workbench · Monaco Editor · Terminal · Debugger · SCM   │
-│  Services · Extension Host · Build system                │
-└──────────────────────────────────────────────────────────┘
+ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+â  PRODUCT LAYER  â  GitCortex Studio                     â
+â  ââââââââââââââ ââââââââââââââ ââââââââââââââââââââââââ â
+â  â Branding   â â New UI     â â GitCortex AI Agent   â â
+â  â product.jsonâ â Projects,  â â UserâAIâProjectâ     â â
+â  â themes,    â â Cloud, AI, â â FilesâTerminalâ      â â
+â  â splash     â â Marketplaceâ â TestsâDeploy         â â
+â  ââââââââââââââ ââââââââââââââ ââââââââââââââââââââââââ â
+ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ¤
+â  EXTENSION LAYER  â  GitCortex Extension Platform        â
+â  gitcortex-ai Â· gitcortex-theme Â· gitcortex-tools       â
+â  + compatibility with existing VS Code extensions        â
+ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ¤
+â  ENGINE LAYER  â  Code-OSS (microsoft/vscode)           â
+â  Workbench Â· Monaco Editor Â· Terminal Â· Debugger Â· SCM   â
+â  Services Â· Extension Host Â· Build system                â
+ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 ```
 
 ### 2.1 Engine layer (inherited, unmodified)
 
 The Code-OSS engine provides:
 
-- **Monaco Editor** — diff editor, multi-cursor, language services, IntelliSense.
-- **Workbench** — activity bar, sidebar, panel, status bar, command palette.
-- **Integrated terminal** — xterm.js + node-pty.
-- **Debugger** — Debug Adapter Protocol (DAP) implementation.
-- **Source control** — Git SCM provider + pluggable SCM model.
-- **Extension host** — the full extension API surface (`vscode` namespace).
-- **Services** — `IInstantiationService`, `IFileService`, `IEditorService`, `ITerminalService`, `IConfigurationService`, etc.
-- **Build system** — gulp tasks, esbuild bundling, electron-builder packaging.
+- **Monaco Editor** â diff editor, multi-cursor, language services, IntelliSense.
+- **Workbench** â activity bar, sidebar, panel, status bar, command palette.
+- **Integrated terminal** â xterm.js + node-pty.
+- **Debugger** â Debug Adapter Protocol (DAP) implementation.
+- **Source control** â Git SCM provider + pluggable SCM model.
+- **Extension host** â the full extension API surface (`vscode` namespace).
+- **Services** â `IInstantiationService`, `IFileService`, `IEditorService`, `ITerminalService`, `IConfigurationService`, etc.
+- **Build system** â gulp tasks, esbuild bundling, electron-builder packaging.
 
 ### 2.2 Extension layer (GitCortex Extension Platform)
 
@@ -58,9 +58,9 @@ All three target the standard `vscode` extension API so they remain compatible w
 
 ### 2.3 Product layer (GitCortex-specific)
 
-- **Branding** — `product/product.json`, application name, icons, splash, default themes, window titles.
-- **New UI** — developer-facing views (Projects, GitCortex AI, Cloud Workspace, Extensions, Marketplace, Terminal, Source Control) composed from workbench primitives.
-- **AI Agent** — a workbench-integrated service that orchestrates the User→AI→Project→Files→Terminal→Tests→Deploy pipeline.
+- **Branding** â `product/product.json`, application name, icons, splash, default themes, window titles.
+- **New UI** â developer-facing views (Projects, GitCortex AI, Cloud Workspace, Extensions, Marketplace, Terminal, Source Control) composed from workbench primitives.
+- **AI Agent** â a workbench-integrated service that orchestrates the UserâAIâProjectâFilesâTerminalâTestsâDeploy pipeline.
 
 ## 3. Code-OSS import & sync model
 
@@ -88,31 +88,54 @@ See [`AI_AGENT.md`](./AI_AGENT.md) for the full design. Summary:
 
 ```
 User input
-   │
-   ▼
-┌───────────────────────────┐
-│ GitCortex AI Orchestrator│   ← workbench service
-└───────────────────────────┘
-   │  tools (capabilities)
-   ├─ Project: open/create/inspect
-   ├─ Files:   read/write/edit/grep
-   ├─ Terminal: run commands
-   ├─ Tests:   run test suites
-   └─ Deploy:  trigger deploy flows
-   ▼
+   |
+   v
++----------------------------+
+| GitCortex AI Orchestrator  |   <- workbench service
++----------------------------+
+   |  tools (capabilities)
+   +-- Project: open/create/inspect
+   +-- Files:   read/write/edit/grep
+   +-- Terminal: run commands
+   +-- Tests:   run test suites
+   +-- Deploy:  trigger deploy flows
+   v
 LLM backend (pluggable; OpenHands-compatible)
 ```
 
 The orchestrator is transport-agnostic. The default transport targets an OpenHands-compatible agent runtime so GitCortex can drive real software work.
 
+### 4.4 Native editor integration
+
+GitCortex AI is wired into the existing workbench  no new shell:
+- **Activity-bar panel**  the AI conversation/run-log webview.
+- **Editor context menu**  Explain Selection, Refactor Selection, Run on File, Generate from Comment, Fix Problems (visible only when relevant, e.g. selection-based entries require `editorHasSelection`).
+- **Explorer context menu**  Run on File.
+- **Command Palette**  all AI commands under the `GitCortex AI` category.
+- **Keybindings**  `Ctrl/Cmd+Shift+G` (open AI), `+G E` (explain), `+G R` (refactor).
+
+The selection/diagnostics are attached to the prompt, so a live model endpoint can act immediately without the user re-pasting context.
+
+### 4.5 Extension marketplace (Open VSX)
+
+The engine's built-in Extensions view is enabled by setting `product.json`'s
+`extensionsGallery` field to **Open VSX** (`https://open-vsx.org/vscode/gallery`)
+via `build/gitcortex/brand.ts`. Open VSX serves VSIX packages in the same
+format as the Microsoft marketplace, so existing VS Code extensions install
+and run unchanged  keeping GitCortex Studio open-source and license-clean.
+
+The `gitcortex-marketplace` extension contributes a curated activity-bar entry
+that delegates to the engine's own `workbench.extensions.*` commands, so the
+browsing/install UX stays the familiar VS Code one.
+
 ## 5. Build system
 
 GitCortex wraps the Code-OSS build in a thin layer under `build/`:
 
-- `build/gitcortex/install.ts` — dependency install wrapper.
-- `build/gitcortex/compile.ts` — workbench + extensions compile.
-- `build/gitcortex/package.ts` — electron packaging with GitCortex branding.
-- `build/gitcortex/launch.ts` — launch the dev build.
+- `build/gitcortex/install.ts` â dependency install wrapper.
+- `build/gitcortex/compile.ts` â workbench + extensions compile.
+- `build/gitcortex/package.ts` â electron packaging with GitCortex branding.
+- `build/gitcortex/launch.ts` â launch the dev build.
 
 Top-level npm scripts (`yarn install`, `yarn compile`, `yarn launch`) delegate to these.
 
