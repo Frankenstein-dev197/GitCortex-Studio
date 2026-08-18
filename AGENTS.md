@@ -37,14 +37,14 @@ Voir `docs/CODE-OSS-ARCHITECTURE.md` pour l'analyse détaillée de l'amont. En b
 
 ## 4. Build
 
-GitCortex Studio utilise le **vrai système de build de VS Code** : Node.js + Yarn + Gulp + esbuild + Electron.
+GitCortex Studio utilise le **vrai système de build de VS Code** (amont 1.133.0) : Node.js **v24.18.0** + **npm** + Gulp + esbuild + Electron. À noter : l'amont 1.133.0 a migré de Yarn à npm (`package-lock.json` présent, `preinstall` rejette Yarn).
 
 ```bash
-yarn install        # installe les dépendances
-yarn compile        # compilation TypeScript headless (via gulp)
+npm ci              # installe les dépendances (reproductible depuis package-lock.json)
+npm run compile     # compilation TypeScript headless (via gulp) — VÉRIFIÉ : 0 erreur
 ```
 
-> ⚠️ Le lancement graphique d'Electron nécessite un affichage. En environnement headless, on valide la compilation (`yarn compile`) et on indique clairement "BUILD NON TESTÉ GRAPHIQUEMENT" lorsqu'on ne peut pas lancer la fenêtre.
+> ⚠️ Le lancement graphique d'Electron nécessite un affichage. En environnement headless, on valide la compilation (`npm run compile`) et on indique clairement "BUILD NON TESTÉ GRAPHIQUEMENT" lorsqu'on ne peut pas lancer la fenêtre.
 
 Voir `docs/BUILD.md` pour le détail.
 

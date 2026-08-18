@@ -4,24 +4,24 @@ Merci de votre intérêt pour GitCortex Studio. Ce document explique comment con
 
 ## 1. Prérequis
 
-- **Node.js** (version LTS recommandée ; voir `package.json` `engines`)
-- **Yarn** (Classic 1.x, tel qu'utilisé par l'amont VS Code)
+- **Node.js v24.18.0** (version exacte spécifiée dans `.nvmrc` ; vérifiée par le `preinstall`)
+- **npm** (version < 12.0.0 ; fournie avec Node 24)
 - **Git**
-- Python 3 (pour certains modules natifs)
-- Un compilateur C++ (pour les modules natifs, selon la plateforme)
+- **Python 3** et un **toolchain C++** (pour les modules natifs : kerberos, native-keymap, etc.)
+- Dépendances système natives Linux : `libkrb5-dev`, `libxkbfile-dev`, `libx11-dev`, `libsecret-1-dev`
 
 ## 2. Récupérer le code
 
 ```bash
 git clone https://github.com/Frankenstein-dev197/GitCortex-Studio.git
 cd GitCortex-Studio
-yarn install
+npm ci
 ```
 
 ## 3. Compiler
 
 ```bash
-yarn compile        # compilation TypeScript headless
+npm run compile        # compilation TypeScript headless (gulp)
 ```
 
 Pour le lancement graphique (Electron), voir `docs/BUILD.md`. En environnement headless, la compilation est validée mais la fenêtre ne peut pas être lancée.
