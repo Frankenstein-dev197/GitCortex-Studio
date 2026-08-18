@@ -104,6 +104,82 @@ function applyPatch(patch: Patch): { file: string; applied: number; skipped: num
 	return { file: patch.file, applied, skipped };
 }
 
+// Structured JSON merges into product.json. Used for fields that don't exist
+// upstream (so string-replace can't add them) — e.g. extensionsGallery
+// (Open VSX marketplace) and onboardingThemes additions. Idempotent: a second
+// run is a no-op because the target value is detected and not re-added.
+interface JsonMerge {
+	/** Dot path into product.json, e.g. "extensionsGallery" or "a.b". */
+	path: string;
+	value: unknown;
+	/** When true, `value` is an array merged into an existing array (deduped). */
+	mergeArray?: boolean;
+}
+
+const PRODUCT_JSON_MERGES: JsonMerge[] = [
+	{
+		// Enable the built-in Extensions view by pointing the gallery at Open VSX.
+		// Open VSX is the open-source marketplace used by VSCodium/Code-OSS forks;
+		// it serves the same VSIX format so existing extensions keep working.
+		path: 'extensionsGallery',
+		value: {
+			serviceUrl: 'https://open-vsx.org/vscode/gallery',
+			itemUrl: 'https://open-vsx.org/vscode/item',
+			resourceUrlTemplate: 'https://open-vsx.org/vscode/unpkg/{publisher}/{name}/{version}/{path}',
+			publisherUrl: 'https://open-vsx.org/vscode/publisher/{publisher}',
+			extensionUrlTemplate: 'https://open-vsx.org/vscode/asset/{publisher}/{name}/{version}/Microsoft.VisualStudio.Code.Manifest.VSIXManifest',
+		},
+	},
+	{
+		// Surface the GitCortex themes in the first-run onboarding theme picker.
+		path: 'onboardingThemes',
+		mergeArray: true,
+		value: [
+			{ id: 'gitcortex-dark', label: 'GitCortex Dark', themeId: 'GitCortex Dark', type: 'dark' },
+			{ id: 'gitcortex-light', label: 'GitCortex Light', themeId: 'GitCortex Light', type: 'light' },
+		],
+	},
+];
+
+function applyJsonMerge(file: string, merge: JsonMerge): { file: string; path: string; status: 'inserted' | 'merged' | 'skipped' } {
+	const fullPath = path.join(CODE_OSS, file);
+	if (!fs.existsSync(fullPath)) {
+		return { file, path: merge.path, status: 'skipped' };
+	}
+	const obj = JSON.parse(fs.readFileSync(fullPath, 'utf8')) as Record<string, unknown>;
+	const segs = merge.path.split('.');
+	let cursor = obj;
+	for (let i = 0; i < segs.length - 1; i++) {
+		if (cursor[segs[i]] === undefined) {
+			cursor[segs[i]] = {} as Record<string, unknown>;
+		}
+		cursor = cursor[segs[i]] as Record<string, unknown>;
+	}
+	const leaf = segs[segs.length - 1];
+	const existing = cursor[leaf];
+	if (existing === undefined) {
+		cursor[leaf] = merge.value;
+		fs.writeFileSync(fullPath, JSON.stringify(obj, undefined, '\t') + '\n', 'utf8');
+		return { file, path: merge.path, status: 'inserted' };
+	}
+	if (merge.mergeArray && Array.isArray(existing) && Array.isArray(merge.value)) {
+		const newArr = [...existing];
+		const keyOf = (v: unknown) => JSON.stringify(v);
+		for (const item of merge.value as unknown[]) {
+			if (!newArr.some((e) => keyOf(e) === keyOf(item))) {
+				newArr.push(item);
+			}
+		}
+		if (newArr.length !== (existing as unknown[]).length) {
+			cursor[leaf] = newArr;
+			fs.writeFileSync(fullPath, JSON.stringify(obj, undefined, '\t') + '\n', 'utf8');
+			return { file, path: merge.path, status: 'merged' };
+		}
+		return { file, path: merge.path, status: 'skipped' };
+	}
+	return { file, path: merge.path, status: 'skipped' };
+}
+
 function main(): void {
 	if (!fs.existsSync(CODE_OSS)) {
 		console.error(`[gitcortex:brand] code-oss/ not found at ${CODE_OSS}`);
@@ -127,6 +203,15 @@ function main(): void {
 		totalApplied += res.applied;
 		totalSkipped += res.skipped;
 		console.log(`  ${res.file.padEnd(60)} applied=${res.applied} skipped=${res.skipped}`);
+	}
+
+	console.log('[gitcortex:brand] Applying product.json JSON merges (Open VSX gallery, onboarding themes) ...');
+	for (const merge of PRODUCT_JSON_MERGES) {
+		const res = applyJsonMerge('product.json', merge);
+		console.log(`  product.json :: ${res.path.padEnd(20)} ${res.status}`);
+		if (res.status !== 'skipped') {
+			totalApplied++;
+		}
 	}
 
 	console.log(`[gitcortex:brand] Done. ${totalApplied} replacement(s) applied, ${totalSkipped} not found (ok if upstream changed).`);

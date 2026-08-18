@@ -1,0 +1,100 @@
+{
+  "name": "gitcortex-marketplace",
+  "displayName": "GitCortex Marketplace",
+  "description": "Curated entry point into the GitCortex extension marketplace, backed by Open VSX for open-source extension compatibility.",
+  "version": "0.1.0",
+  "publisher": "gitcortex",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "icon": "icon.png",
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:gitcortex.marketplace.featured"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gitcortex-marketplace",
+          "title": "GitCortex Marketplace",
+          "icon": "resources/marketplace.svg"
+        }
+      ]
+    },
+    "views": {
+      "gitcortex-marketplace": [
+        {
+          "id": "gitcortex.marketplace.featured",
+          "name": "Featured"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "gitcortex.marketplace.featured",
+        "contents": "[Browse the full marketplace](command:gitcortex.marketplace.browse)\n[Install GitCortex AI](command:gitcortex.marketplace.installAi)\n[Install GitCortex Tools](command:gitcortex.marketplace.installTools)\n[Install GitCortex Theme](command:gitcortex.marketplace.installTheme)\nOpen VSX powers extension discovery for GitCortex Studio — existing VS Code extensions install unchanged."
+      }
+    ],
+    "commands": [
+      {
+        "command": "gitcortex.marketplace.browse",
+        "title": "GitCortex Marketplace: Browse Extensions",
+        "category": "GitCortex",
+        "icon": "$(extensions)"
+      },
+      {
+        "command": "gitcortex.marketplace.installAi",
+        "title": "GitCortex Marketplace: Install GitCortex AI",
+        "category": "GitCortex"
+      },
+      {
+        "command": "gitcortex.marketplace.installTools",
+        "title": "GitCortex Marketplace: Install GitCortex Tools",
+        "category": "GitCortex"
+      },
+      {
+        "command": "gitcortex.marketplace.installTheme",
+        "title": "GitCortex Marketplace: Install GitCortex Theme",
+        "category": "GitCortex"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        { "command": "gitcortex.marketplace.browse" },
+        { "command": "gitcortex.marketplace.installAi" },
+        { "command": "gitcortex.marketplace.installTools" },
+        { "command": "gitcortex.marketplace.installTheme" }
+      ]
+    },
+    "configuration": {
+      "title": "GitCortex Marketplace",
+      "properties": {
+        "gitcortex.marketplace.galleryServiceUrl": {
+          "type": "string",
+          "default": "https://open-vsx.org/vscode/gallery",
+          "description": "Open VSX gallery service URL used for extension discovery. Mirrors product.json extensionsGallery.serviceUrl; informational only."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Frankenstein-dev197/GitCortex-Studio",
+    "directory": "extensions/gitcortex-marketplace"
+  }
+}

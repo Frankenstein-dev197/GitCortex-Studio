@@ -32,6 +32,7 @@ GitCortex Studio is a professional developer IDE built on the Code-OSS (microsof
 - Co-author: openhands <openhands@all-hands.dev>.
 
 ## Status (as built)
-- DONE: repo bootstrap, engine import (`code-oss/` @ 2c314930), branding engine (`brand.ts`: 25 patches apply, JSON valid), `gitcortex-theme` (Dark+Light), `gitcortex-tools` (Projects/Cloud/Marketplace views + deploy, `tsc` clean), `gitcortex-ai` (orchestrator + 7 tools + pluggable transport + chat webview, `tsc` clean, `test/smoke.ts` passes: 12 steps).
+- DONE: repo bootstrap, engine import (`code-oss/` @ 2c314930), branding engine (`brand.ts`: 27 patches — identity + strings + JSON merges for `extensionsGallery` Open VSX + `onboardingThemes`), `gitcortex-theme` (Dark+Light), `gitcortex-tools` (Projects/Cloud views + deploy, marketplace delegated), `gitcortex-marketplace` (curated Open VSX entry), `gitcortex-ai` (orchestrator + 7 tools + pluggable transport + chat webview + native editor integration: explain/refactor/generate/fix/runTests + keybindings + context menus, `tsc` clean, `test/smoke.ts` passes: 12 steps), `gitcortex/` product layer doc.
+- Product layer separation documented in `gitcortex/README.md` + `docs/ARCHITECTURE.md` §4.4 (editor integration) §4.5 (Open VSX marketplace).
 - Auth: push requires `GITHUB_PERSONAL_ACCESS_TOKEN`.
-- PENDING: gitcortex-ai → native AHP migration, full engine build validation (sandbox-blocked), marketplace infra, first release.
+- PENDING: gitcortex-ai → native AHP migration, full engine build validation (sandbox-blocked), first release.

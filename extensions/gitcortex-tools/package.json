@@ -29,11 +29,6 @@
           "id": "gitcortex-cloud",
           "title": "Cloud Workspace",
           "icon": "resources/cloud.svg"
-        },
-        {
-          "id": "gitcortex-marketplace",
-          "title": "Marketplace",
-          "icon": "resources/marketplace.svg"
         }
       ]
     },
@@ -51,13 +46,6 @@
           "name": "Cloud Workspaces",
           "icon": "resources/cloud.svg"
         }
-      ],
-      "gitcortex-marketplace": [
-        {
-          "id": "gitcortex.marketplace",
-          "name": "GitCortex Marketplace",
-          "icon": "resources/marketplace.svg"
-        }
       ]
     },
     "viewsWelcome": [
@@ -68,10 +56,6 @@
       {
         "view": "gitcortex.cloud",
         "contents": "No cloud workspace connected.\n[Connect Workspace](command:gitcortex.cloud.connect)\nGitCortex Cloud Workspace lets you run your projects in a remote, agent-ready environment."
-      },
-      {
-        "view": "gitcortex.marketplace",
-        "contents": "Browse the GitCortex Extension Marketplace.\n[Open Marketplace](command:gitcortex.marketplace.open)"
       }
     ],
     "commands": [

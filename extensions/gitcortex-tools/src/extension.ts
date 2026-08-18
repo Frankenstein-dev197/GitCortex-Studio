@@ -1,28 +1,26 @@
 /**
  * GitCortex Tools — developer-first interface for GitCortex Studio.
  *
- * Contributes three activity-bar surfaces:
+ * Contributes two activity-bar surfaces:
  *  - Projects       (recent / open / new)
  *  - Cloud Workspace (connect / disconnect)
- *  - Marketplace     (open the curated GitCortex marketplace)
  *
+ * The Marketplace surface lives in its own `gitcortex-marketplace` extension;
+ * this extension's `gitcortex.marketplace.open` command delegates to it.
  * Plus the deploy helper command. Everything is built on the standard
  * `vscode` extension API so it stays compatible with the wider ecosystem.
  */
 import * as vscode from 'vscode';
 import { ProjectsViewProvider } from './projectsView';
 import { CloudViewProvider } from './cloudView';
-import { MarketplaceViewProvider } from './marketplaceView';
 
 export function activate(context: vscode.ExtensionContext): void {
 	const projectsProvider = new ProjectsViewProvider(context);
 	const cloudProvider = new CloudViewProvider(context);
-	const marketplaceProvider = new MarketplaceViewProvider(context);
 
 	context.subscriptions.push(
 		vscode.window.registerTreeDataProvider('gitcortex.projects', projectsProvider),
 		vscode.window.registerTreeDataProvider('gitcortex.cloud', cloudProvider),
-		vscode.window.registerTreeDataProvider('gitcortex.marketplace', marketplaceProvider),
 	);
 
 	context.subscriptions.push(
@@ -33,7 +31,15 @@ export function activate(context: vscode.ExtensionContext): void {
 		}),
 		vscode.commands.registerCommand('gitcortex.cloud.connect', () => cloudProvider.connect()),
 		vscode.commands.registerCommand('gitcortex.cloud.disconnect', () => cloudProvider.disconnect()),
-		vscode.commands.registerCommand('gitcortex.marketplace.open', () => marketplaceProvider.open()),
+		// Delegate to the dedicated marketplace extension (avoids a duplicate
+		// activity-bar container). Falls back to the engine Extensions view.
+		vscode.commands.registerCommand('gitcortex.marketplace.open', async () => {
+			try {
+				await vscode.commands.executeCommand('gitcortex.marketplace.browse');
+			} catch {
+				await vscode.commands.executeCommand('workbench.view.extensions');
+			}
+		}),
 		vscode.commands.registerCommand('gitcortex.deploy.run', () => deploy()),
 	);
 }

@@ -51,29 +51,124 @@
       {
         "command": "gitcortex.ai.clear",
         "title": "GitCortex AI: Clear Conversation",
-        "category": "GitCortex AI"
+        "category": "GitCortex AI",
+        "icon": "$(clear-all)"
       },
       {
         "command": "gitcortex.ai.runFile",
         "title": "GitCortex AI: Run on Current File",
         "category": "GitCortex AI",
         "icon": "$(sparkle)"
+      },
+      {
+        "command": "gitcortex.ai.explainSelection",
+        "title": "GitCortex AI: Explain Selection",
+        "category": "GitCortex AI",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "gitcortex.ai.refactorSelection",
+        "title": "GitCortex AI: Refactor Selection",
+        "category": "GitCortex AI",
+        "icon": "$(wand)"
+      },
+      {
+        "command": "gitcortex.ai.generateFromComment",
+        "title": "GitCortex AI: Generate from Comment",
+        "category": "GitCortex AI",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "gitcortex.ai.fixProblems",
+        "title": "GitCortex AI: Fix Problems in File",
+        "category": "GitCortex AI",
+        "icon": "$(bug)"
+      },
+      {
+        "command": "gitcortex.ai.runTests",
+        "title": "GitCortex AI: Run Tests",
+        "category": "GitCortex AI",
+        "icon": "$(beaker)"
       }
     ],
     "menus": {
       "commandPalette": [
         { "command": "gitcortex.ai.open" },
         { "command": "gitcortex.ai.clear" },
-        { "command": "gitcortex.ai.runFile" }
+        { "command": "gitcortex.ai.runFile", "when": "editorIsOpen" },
+        { "command": "gitcortex.ai.explainSelection", "when": "editorHasSelection" },
+        { "command": "gitcortex.ai.refactorSelection", "when": "editorHasSelection" },
+        { "command": "gitcortex.ai.generateFromComment", "when": "editorIsOpen" },
+        { "command": "gitcortex.ai.fixProblems", "when": "editorIsOpen" },
+        { "command": "gitcortex.ai.runTests" }
       ],
       "editor/context": [
         {
+          "command": "gitcortex.ai.explainSelection",
+          "when": "editorHasSelection",
+          "group": "gitcortex@1"
+        },
+        {
+          "command": "gitcortex.ai.refactorSelection",
+          "when": "editorHasSelection",
+          "group": "gitcortex@2"
+        },
+        {
           "command": "gitcortex.ai.runFile",
           "when": "editorFocus",
+          "group": "gitcortex@3"
+        },
+        {
+          "command": "gitcortex.ai.generateFromComment",
+          "when": "editorFocus",
+          "group": "gitcortex@4"
+        },
+        {
+          "command": "gitcortex.ai.fixProblems",
+          "when": "editorFocus",
+          "group": "gitcortex@5"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "gitcortex.ai.open",
+          "when": "editorIsOpen",
+          "group": "navigation@99"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "gitcortex.ai.runFile",
           "group": "gitcortex@1"
         }
       ]
     },
+    "keybindings": [
+      {
+        "command": "gitcortex.ai.open",
+        "key": "ctrl+shift+g",
+        "mac": "cmd+shift+g",
+        "when": "editorTextFocus || editorFocus"
+      },
+      {
+        "command": "gitcortex.ai.explainSelection",
+        "key": "ctrl+shift+g e",
+        "mac": "cmd+shift+g e",
+        "when": "editorTextFocus && editorHasSelection"
+      },
+      {
+        "command": "gitcortex.ai.refactorSelection",
+        "key": "ctrl+shift+g r",
+        "mac": "cmd+shift+g r",
+        "when": "editorTextFocus && editorHasSelection"
+      },
+      {
+        "command": "gitcortex.ai.send",
+        "key": "ctrl+i",
+        "mac": "cmd+i",
+        "when": "gitcortex.ai.chatFocused"
+      }
+    ],
     "configuration": {
       "title": "GitCortex AI",
       "properties": {

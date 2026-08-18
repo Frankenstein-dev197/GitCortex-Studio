@@ -104,6 +104,27 @@ function localPlanner(input: TransportInput): TransportOutput {
 		const path = extractQuoted(prompt) ?? '';
 		return { kind: 'tool', toolCall: { name: 'file.read', args: { path }, reasoning: 'User wants to read a file' } };
 	}
+	// Generative intents (explain/refactor/generate/fix) need a live model. The
+	// local planner can't produce prose/edits, so it steers the user toward
+	// configuring a transport endpoint rather than pretending to answer.
+	if (m(/\b(explain|describe|what does)\b/)) {
+		return {
+			kind: 'message',
+			message: 'To explain code, GitCortex AI needs a live model. Set `gitcortex.ai.transport` and `gitcortex.ai.endpoint` to an OpenHands-compatible runtime, then rerun this command — the selected code is already attached to the prompt.',
+		};
+	}
+	if (m(/\b(refactor|improve|clean up|simplify)\b/)) {
+		return {
+			kind: 'message',
+			message: 'To refactor code, GitCortex AI needs a live model endpoint. Once `gitcortex.ai.endpoint` is configured, this command will propose and apply edits to the selected file.',
+		};
+	}
+	if (m(/\b(fix|repair)\b.*\b(problem|error|diagnostic|issue)\b/)) {
+		return {
+			kind: 'message',
+			message: 'To fix diagnostics, GitCortex AI needs a live model endpoint. Configure `gitcortex.ai.endpoint`, then rerun — the file problems are already collected in the prompt.',
+		};
+	}
 	// Fallback: conversational acknowledgement.
 	return {
 		kind: 'message',
